@@ -1,7 +1,6 @@
 <?php
 require_once 'config.php';
 
-// If already logged in, redirect
 if (isTouristLoggedIn()) {
     redirect('index.php');
 }

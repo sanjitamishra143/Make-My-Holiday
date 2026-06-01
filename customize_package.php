@@ -39,10 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $meal_plan             = isset($_POST['meal_plan'])             ? sanitize($_POST['meal_plan'])            : 'breakfast';
     $additional_activities = isset($_POST['additional_activities']) ? $_POST['additional_activities']         : [];
  
-    // ══════════════════════════════════════════════════════════════
     //  VALIDATION 1 — Check for duplicate active booking
-    //  Same tourist + same package + status NOT cancelled/rejected
-    // ══════════════════════════════════════════════════════════════
     $dup_stmt = $conn->prepare("
         SELECT id FROM bookings
         WHERE tourist_id = ?
@@ -63,23 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $dup_stmt->close();
  
-    // ══════════════════════════════════════════════════════════════
     //  VALIDATION 2 — Start date must be in the future
-    // ══════════════════════════════════════════════════════════════
     if (strtotime($start_date) < strtotime('+1 day')) {
         $error = "Start date must be at least tomorrow.";
         goto skip_booking;
     }
  
-    // ══════════════════════════════════════════════════════════════
     //  VALIDATION 3 — Number of travelers within allowed range
-    // ══════════════════════════════════════════════════════════════
     if ($num_travelers < 1 || $num_travelers > $package['max_people']) {
         $error = "Number of travelers must be between 1 and " . $package['max_people'] . ".";
         goto skip_booking;
     }
  
-    // ── Calculate price ───────────────────────────────────────────
+    // Calculate price 
     $base_price  = $package['price'];
     $custom_price = $base_price;
  
@@ -115,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'custom_price'          => $custom_price,
     ]);
  
-    // ── Insert custom_packages ────────────────────────────────────
+    // Insert custom_packages 
     $stmt = $conn->prepare("
         INSERT INTO custom_packages
             (tourist_id, base_package_id, custom_name, custom_duration, custom_price, customizations, status)
@@ -126,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $stmt->close();
  
-    // ── Insert booking ────────────────────────────────────────────
+    // Insert booking 
     $booking_date = date('Y-m-d');
     $stmt = $conn->prepare("
         INSERT INTO bookings
@@ -223,7 +216,7 @@ $conn->close();
         .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e0e0e0; }
         .summary-total { font-size: 20px; font-weight: 700; color: #667eea; padding-top: 15px; }
  
-        /* ── Duplicate warning box ── */
+        /* Duplicate warning box */
         .alert-duplicate {
             background: #fff3cd;
             border: 1px solid #ffc107;

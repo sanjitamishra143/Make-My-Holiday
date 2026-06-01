@@ -26,16 +26,12 @@ function sanitize($input) {
     return htmlspecialchars(trim($input));
 }
 
-// ------------------------
 // Tourist Auth Helpers
-// ------------------------
 function isTouristLoggedIn() {
     return isset($_SESSION['tourist_id']);
 }
 
-// ------------------------
 // Admin Auth Helpers
-// ------------------------
 function isAdminLoggedIn() {
     return isset($_SESSION['admin_id']);
 }
@@ -46,9 +42,7 @@ function requireAdminLogin() {
     }
 }
 
-// ------------------------
 // Messages Helpers
-// ------------------------
 function setSuccessMessage($msg) {
     $_SESSION['success_msg'] = $msg;
 }

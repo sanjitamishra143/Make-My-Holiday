@@ -51,7 +51,7 @@ echo "<h1>🔐 Admin Password Reset Tool</h1>";
 
 $conn = getConnection();
 
-// STEP 1: Check if admin user exists
+// step-1 : Check if admin user exists
 echo "<h2>Step 1: Checking Admin User</h2>";
 
 $result = $conn->query("SELECT * FROM admin_users WHERE username = 'admin'");
@@ -89,7 +89,7 @@ echo "<tr><td>Email</td><td>" . htmlspecialchars($admin['email']) . "</td></tr>"
 echo "<tr><td>Password Hash</td><td><code style='font-size: 10px;'>" . htmlspecialchars(substr($admin['password'], 0, 50)) . "...</code></td></tr>";
 echo "</table>";
 
-// STEP 2: Check password format
+// step-2 : Check password format
 echo "<h2>Step 2: Password Analysis</h2>";
 
 $current_password = $admin['password'];
@@ -113,7 +113,7 @@ if ($password_length < 30) {
 }
 echo "</div>";
 
-// STEP 3: Test password verification
+// step-3 : Test password verification
 echo "<h2>Step 3: Testing Password Verification</h2>";
 
 $test_passwords = ['admin123', 'admin', 'password', $current_password];
@@ -136,7 +136,7 @@ foreach ($test_passwords as $test_pass) {
 }
 echo "</table>";
 
-// STEP 4: Fix the password
+// step-4 : Fix the password
 echo "<h2>Step 4: Fix Password</h2>";
 
 if (isset($_GET['fix']) && $_GET['fix'] === 'yes') {
@@ -181,7 +181,7 @@ if (isset($_GET['fix']) && $_GET['fix'] === 'yes') {
     echo "<a href='?fix=yes' class='btn' style='font-size: 18px;'>🔧 FIX PASSWORD NOW</a>";
 }
 
-// STEP 5: Manual SQL commands
+// step-5 : Manual SQL commands
 echo "<h2>Step 5: Manual Fix (Alternative Method)</h2>";
 echo "<div class='info'>";
 echo "<strong>If the automatic fix doesn't work, use this SQL query:</strong><br><br>";

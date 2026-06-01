@@ -1,5 +1,4 @@
 <?php
-// Make sure config.php is properly loaded
 if (file_exists('config.php')) {
     require_once 'config.php';
 } else {
@@ -196,7 +195,6 @@ $conn = getConnection();
     ];
 endwhile;
 
-            
             // Sort by score
             usort($packageScores, function($a, $b) {
                 return $b['score'] <=> $a['score'];

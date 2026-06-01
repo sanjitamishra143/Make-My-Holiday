@@ -12,7 +12,7 @@ if ($id == 0) {
     redirect('manage_bookings.php');
 }
  
-// ── Status change actions ─────────────────────────────────────────
+//  Status change actions 
 $action = $_GET['action'] ?? '';
 $allowed_actions = ['confirm' => 'Confirmed', 'cancel' => 'Cancelled', 'complete' => 'Completed'];
  
@@ -30,7 +30,7 @@ if (isset($allowed_actions[$action])) {
     redirect('manage_bookings.php');
 }
  
-// ── DELETE booking ────────────────────────────────────────────────
+//  Delete booking 
 if ($action === 'delete') {
     $stmt = $conn->prepare("DELETE FROM bookings WHERE id = ?");
     $stmt->bind_param("i", $id);
@@ -44,7 +44,7 @@ if ($action === 'delete') {
     redirect('manage_bookings.php');
 }
  
-// ── EDIT booking (POST) ───────────────────────────────────────────
+//  Edit booking (POST) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
     $start_date       = $_POST['start_date'];
     $end_date         = $_POST['end_date'];
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     redirect('manage_bookings.php');
 }
  
-// ── Load booking for edit form ────────────────────────────────────
+//  load booking for edit form 
 if ($action === 'edit') {
     $stmt = $conn->prepare("
         SELECT b.*, p.name as package_name, t.name as tourist_name

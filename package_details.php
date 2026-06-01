@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     skip_review:;
 }
 
-// ── Get package details ───────────────────────────────────────────
+// Get package details
 $stmt = $conn->prepare("
     SELECT p.*, c.name as category_name
     FROM packages p
@@ -96,7 +96,7 @@ if ($result->num_rows == 0) {
 
 $package = $result->fetch_assoc();
 
-// ── Get approved reviews ──────────────────────────────────────────
+// Get approved reviews
 $reviews = $conn->query("
     SELECT c.*, t.name as tourist_name
     FROM comments c
@@ -105,14 +105,14 @@ $reviews = $conn->query("
     ORDER BY c.created_at DESC
 ");
 
-// ── Average rating ────────────────────────────────────────────────
+// Average rating
 $avg_rating = $conn->query("
     SELECT AVG(rating) as avg_rating, COUNT(*) as review_count
     FROM comments
     WHERE package_id = $package_id AND status = 'Approved'
 ")->fetch_assoc();
 
-// ── Similar packages ──────────────────────────────────────────────
+// Similar packages 
 $recommended = $conn->query("
     SELECT p.* FROM packages p
     WHERE p.category_id = {$package['category_id']}
@@ -121,7 +121,7 @@ $recommended = $conn->query("
     LIMIT 3
 ");
 
-// ── Check if logged-in tourist already reviewed ───────────────────
+// Check if logged-in tourist already reviewed 
 $already_reviewed = false;
 $has_booking      = false;
 if (isTouristLoggedIn()) {
@@ -345,7 +345,7 @@ $itinerary_days = $package['itinerary'] ? explode('|', $package['itinerary']) : 
         <div class="container">
             <div class="package-details-grid">
 
-                <!-- ── MAIN CONTENT ── -->
+                <!-- MAIN CONTENT -->
                 <div class="package-main">
                     <div class="package-header">
                         <div class="breadcrumb">
@@ -486,7 +486,7 @@ $itinerary_days = $package['itinerary'] ? explode('|', $package['itinerary']) : 
                             <p class="no-reviews">No reviews yet. Be the first to review this package!</p>
                         <?php endif; ?>
 
-                        <!-- ── REVIEW SUBMISSION FORM ── -->
+                        <!-- REVIEW SUBMISSION FORM -->
                         <?php if (!isTouristLoggedIn()): ?>
                             <!-- Not logged in -->
                             <div class="review-alert-info">
@@ -567,14 +567,14 @@ $itinerary_days = $package['itinerary'] ? explode('|', $package['itinerary']) : 
                             <?php endif; ?>
 
                         <?php endif; ?>
-                        <!-- ── END REVIEW FORM ── -->
+                        <!-- END REVIEW FORM -->
 
                     </div>
                     <!-- END Reviews Section -->
 
                 </div>
 
-                <!-- ── SIDEBAR ── -->
+                <!-- SIDEBAR -->
                 <div class="package-sidebar">
                     <div class="booking-card">
                         <div class="price-section">

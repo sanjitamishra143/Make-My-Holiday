@@ -7,7 +7,7 @@ if (!isAdminLoggedIn()) {
  
 $conn = getConnection();
  
-// ── EDIT Tourist (POST) ───────────────────────────────────────────
+// EDIT Tourist (POST) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
     $id      = intval($_POST['id']);
     $name    = sanitize($_POST['name']);
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     redirect('tourists.php');
 }
  
-// ── DELETE Tourist ────────────────────────────────────────────────
+// DELETE Tourist 
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
  
@@ -73,7 +73,7 @@ if (isset($_GET['delete'])) {
     redirect('tourists.php');
 }
  
-// ── Fetch all tourists ────────────────────────────────────────────
+// Fetch all tourists 
 $tourists = $conn->query("
     SELECT t.*,
            COUNT(DISTINCT b.id) as booking_count,
@@ -96,7 +96,7 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/admin-style.css">
     <style>
-        /* ── Action buttons ── */
+        /* Action buttons */
         .btn-edit-tourist {
             background: #667eea;
             color: white; border: none; border-radius: 6px;
@@ -117,7 +117,7 @@ $conn->close();
  
         .action-buttons { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
  
-        /* ── Modal ── */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -294,9 +294,9 @@ $conn->close();
                                 </td>
                                 <td><?php echo date('M d, Y', strtotime($tourist['created_at'])); ?></td>
  
-                                <!-- ── ACTIONS ── -->
+                                <!-- ACTIONS -->
                                 <td class="action-buttons">
-                                    <!-- ✏️ Edit -->
+                                    <!-- Edit -->
                                     <button class="btn-edit-tourist"
                                         onclick="openEditModal(
                                             <?php echo $tourist['id']; ?>,
@@ -308,7 +308,7 @@ $conn->close();
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
  
-                                    <!-- 🗑️ Delete -->
+                                    <!-- Delete -->
                                     <a href="tourists.php?delete=<?php echo $tourist['id']; ?>"
                                        class="btn-delete-tourist"
                                        onclick="return confirm('Delete tourist: <?php echo htmlspecialchars(addslashes($tourist['name'])); ?>?\n\nThis will fail if they have bookings.')">
@@ -332,7 +332,7 @@ $conn->close();
         </div>
     </div>
  
-    <!-- ══ EDIT TOURIST MODAL ════════════════════════════════════ -->
+    <!-- Edit Tourist Modal -->
     <div id="editModal" class="modal" onclick="closeOnOutsideClick(event)">
         <div class="modal-box">
             <div class="modal-header">

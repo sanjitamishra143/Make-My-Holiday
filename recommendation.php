@@ -1,17 +1,13 @@
 <?php
 /**
- * ============================================================
  * MAKE MY HOLIDAY — Collaborative Filtering Algorithm
  * File: recommendation.php
- * ============================================================
  *
  * HOW COLLABORATIVE FILTERING WORKS (IMPLICIT / COSINE):
- * ─────────────────────────────────────────────────────────────
  * Instead of relying on star ratings, this system uses
  * IMPLICIT FEEDBACK — i.e., booking and interaction history.
  *
  * Each tourist is represented as a BINARY VECTOR in package space:
- *
  *           PKG1  PKG2  PKG3  PKG4  PKG5
  *  User 1 [  1,    1,    0,    1,    0  ]
  *  User 2 [  1,    0,    1,    0,    1  ]
@@ -21,23 +17,18 @@
  *  0 = no interaction
  *
  * SIMILARITY is measured using COSINE SIMILARITY:
- *
  *  cos(θ) = (A · B) / (||A|| × ||B||)
- *
  *  Result:
  *   1.0 = identical booking behaviour
  *   0.0 = no packages in common
  *
  * "Users who booked similar packages are similar users."
  * This is called: Implicit User-Based Collaborative Filtering.
- * ============================================================
  */
 
 require_once 'config.php';
 
-// ================================================================
 //  CLASS: CollaborativeFilter
-// ================================================================
 class CollaborativeFilter {
 
     private $conn;
@@ -46,23 +37,18 @@ class CollaborativeFilter {
         $this->conn = $conn;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  STEP 1 — Build Binary Interaction Matrix
-    //
     //  Creates a matrix like:
-    //
     //           PKG1  PKG2  PKG3  PKG4  PKG5
     //  User 1 [  1,    1,    0,    1,    0  ]
     //  User 2 [  1,    0,    1,    0,    1  ]
     //  User 3 [  0,    1,    1,    1,    0  ]
-    //
     //  1 = tourist has booked OR reviewed this package
     //  0 = no interaction (not stored — sparse matrix)
-    //
     //  NOTE: We use binary implicit signals instead of star ratings.
     //  Booking = strong implicit signal of interest.
     //  Approved review = also a strong signal of engagement.
-    // ────────────────────────────────────────────────────────────
+
     public function buildRatingMatrix(): array {
         $matrix = [];
 
@@ -76,8 +62,7 @@ class CollaborativeFilter {
             $matrix[$row['tourist_id']][$row['package_id']] = 1;
         }
 
-        // Signal 2: Bookings (any status except Cancelled)
-        // Booking = clear intent/interaction signal
+        // Signal 2: Bookings
         $bookings = $this->conn->query("
             SELECT tourist_id, package_id
             FROM bookings
@@ -91,14 +76,10 @@ class CollaborativeFilter {
         return $matrix;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  STEP 2 — Calculate Cosine Similarity
-    //
     //  Measures how similarly two tourists interact with packages.
-    //
     //  Formula:
     //  cos(θ) = (A · B) / (||A|| × ||B||)
-    //
     //  Where:
     //   A · B   = dot product  = number of packages BOTH booked
     //   ||A||   = magnitude of A = sqrt(number of packages A booked)
@@ -111,8 +92,8 @@ class CollaborativeFilter {
     //
     //  Result:
     //   1.0 = identical booking pattern
-    //   0.0 = no packages in common (completely dissimilar)
-    // ────────────────────────────────────────────────────────────
+    //   0.0 = no packages in common 
+
     public function cosineSimilarity(array $vectorA, array $vectorB): float {
         // Dot product = number of packages both tourists booked
         $dotProduct = 0.0;
@@ -138,13 +119,11 @@ class CollaborativeFilter {
         return $dotProduct / ($magnitudeA * $magnitudeB);
     }
 
-    // ────────────────────────────────────────────────────────────
     //  STEP 3 — Find Similar Tourists (Neighbours)
-    //
     //  Compares target tourist against ALL other tourists
     //  using Cosine Similarity on their booking vectors.
     //  Returns top N most similar tourists (neighbours).
-    // ────────────────────────────────────────────────────────────
+
     public function findSimilarTourists(int $targetId, array $matrix, int $topN = 5): array {
         $similarities = [];
 
@@ -171,15 +150,10 @@ class CollaborativeFilter {
         return array_slice($similarities, 0, $topN, true);
     }
 
-    // ────────────────────────────────────────────────────────────
     //  STEP 4 — Score Unseen Packages Using Neighbour Interactions
-    //
     //  For each package the target tourist has NOT interacted with:
-    //  Calculates a recommendation score as a weighted sum of
-    //  neighbour similarity scores.
-    //
+    //  Calculates a recommendation score as a weighted sum of neighbour similarity scores.
     //  Formula (weighted vote):
-    //
     //  score(i) = Σ [ sim(target, neighbour) × interaction(neighbour, i) ]
     //             ─────────────────────────────────────────────────────────
     //                          Σ sim(target, neighbour)
@@ -190,11 +164,10 @@ class CollaborativeFilter {
     //                        Σ all neighbour similarities
     //
     //  Higher score = more (and more similar) neighbours booked this package.
-    //
     //  NOTE: No mean-centering is needed (unlike Pearson/explicit ratings)
     //  because we are working with binary implicit feedback, not numeric
     //  star ratings. The weighted vote directly reflects neighbour interest.
-    // ────────────────────────────────────────────────────────────
+
     public function predictRatings(int $targetId, array $matrix, array $neighbours): array {
         $scores        = [];
         $targetVector  = $matrix[$targetId] ?? [];
@@ -236,7 +209,6 @@ class CollaborativeFilter {
             if (in_array($pkgId, $bookedPackages)) {
                 continue;
             }
-
             $weightedVote = 0.0;
 
             // Accumulate similarity weight from neighbours who interacted
@@ -262,9 +234,8 @@ class CollaborativeFilter {
         return $scores;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  STEP 5 — Get Full Package Details for Recommendations
-    // ────────────────────────────────────────────────────────────
+
     public function getPackageDetails(array $packageIds): array {
         if (empty($packageIds)) return [];
 
@@ -284,13 +255,12 @@ class CollaborativeFilter {
         return $packages;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  MAIN METHOD — Get Recommendations for a Tourist
     //
     //  @param int $touristId  — logged in tourist
     //  @param int $topN       — how many recommendations to return
     //  @return array          — recommended packages with scores
-    // ────────────────────────────────────────────────────────────
+
     public function getRecommendations(int $touristId, int $topN = 5): array {
         // Build binary interaction matrix from bookings + reviews
         $matrix = $this->buildRatingMatrix();
@@ -335,10 +305,9 @@ class CollaborativeFilter {
         return $result;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  FALLBACK — Popular Packages (cold start problem)
     //  Used when tourist has no booking/review history at all.
-    // ────────────────────────────────────────────────────────────
+
     public function getPopularPackages(int $topN = 5): array {
         $result = $this->conn->query("
             SELECT p.*, c.name as category_name,
@@ -366,9 +335,7 @@ class CollaborativeFilter {
         return $packages;
     }
 
-    // ────────────────────────────────────────────────────────────
     //  LOG recommendations to DB
-    // ────────────────────────────────────────────────────────────
     private function logRecommendations(int $touristId, array $results): void {
         $stmt = $this->conn->prepare("
             INSERT INTO recommendation_logs
@@ -387,9 +354,8 @@ class CollaborativeFilter {
     }
 }
 
-// ================================================================
 //  GLOBAL FUNCTION — used by my_bookings.php and other pages
-// ================================================================
+
 function getRecommendedPackages(int $touristId, int $topN = 5): array {
     $conn = getConnection();
     $cf   = new CollaborativeFilter($conn);

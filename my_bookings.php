@@ -9,7 +9,7 @@ if (!isTouristLoggedIn()) {
 $tourist_id = $_SESSION['tourist_id'];
 $conn       = getConnection();
 
-// ── Tourist: Cancel booking ───────────────────────────────────────
+// Tourist: Cancel booking 
 if (isset($_GET['cancel'])) {
     $bid  = intval($_GET['cancel']);
     $stmt = $conn->prepare("
@@ -27,7 +27,7 @@ if (isset($_GET['cancel'])) {
     redirect('my_bookings.php');
 }
 
-// ── Tourist: Delete booking ───────────────────────────────────────
+//  Tourist: Delete booking 
 if (isset($_GET['delete'])) {
     $bid  = intval($_GET['delete']);
     $stmt = $conn->prepare("
@@ -45,7 +45,7 @@ if (isset($_GET['delete'])) {
     redirect('my_bookings.php');
 }
 
-// ── Fetch bookings ────────────────────────────────────────────────
+// Fetch bookings 
 $stmt = $conn->prepare("
     SELECT b.*, p.name as package_name, p.image, p.location
     FROM bookings b
@@ -58,7 +58,7 @@ $stmt->execute();
 $bookings = $stmt->get_result();
 $stmt->close();
 
-// ── CF Recommendations ────────────────────────────────────────────
+//  CF Recommendations 
 // Always get recommendations — CF if possible, popular packages as fallback
 $recommended_packages = getRecommendedPackages($tourist_id, 3);
 
@@ -95,14 +95,14 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* ── Page Layout ── */
+        /* Page Layout */
         .bookings-section {
             padding: 50px 0;
             background: #f8f9fa;
             min-height: calc(100vh - 200px);
         }
 
-        /* ── Header ── */
+        /* Header */
         .bookings-header {
             background: white;
             padding: 30px;
@@ -127,7 +127,7 @@ $conn->close();
         .stat-box h3 { font-size: 32px; margin-bottom: 5px; }
         .stat-box p  { font-size: 14px; opacity: 0.9; }
 
-        /* ── Booking Cards ── */
+        /* Booking Cards */
         .bookings-list { display: grid; gap: 20px; }
         .booking-card {
             background: white;
@@ -163,7 +163,7 @@ $conn->close();
             min-width: 160px;
         }
 
-        /* ── Status Badges ── */
+        /* Status Badges */
         .status-badge {
             padding: 8px 20px;
             border-radius: 20px;
@@ -184,7 +184,7 @@ $conn->close();
             margin-top: 15px;
         }
 
-        /* ── Action Buttons ── */
+        /* Action Buttons */
         .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; width: 100%; }
         .btn-view-pkg {
             border: 2px solid #667eea;
@@ -244,7 +244,7 @@ $conn->close();
             line-height: 1.5;
         }
 
-        /* ── No Bookings ── */
+        /* No Bookings */
         .no-bookings {
             background: white;
             padding: 80px 40px;
@@ -256,7 +256,7 @@ $conn->close();
         .no-bookings h3 { font-size: 28px; margin-bottom: 10px; color: #666; }
         .no-bookings p  { color: #999; margin-bottom: 30px; }
 
-        /* ── Recommendations Section ── */
+        /* Recommendations Section */
         .recommendations-section { margin-top: 50px; }
         .recommendations-section h2 { font-size: 28px; margin-bottom: 10px; color: #333; }
 
@@ -273,7 +273,7 @@ $conn->close();
             margin-bottom: 16px;
         }
 
-        /* ── Responsive ── */
+        /* Responsive */
         @media (max-width: 768px) {
             .booking-card    { grid-template-columns: 1fr; }
             .booking-image   { height: 200px; }
@@ -284,7 +284,7 @@ $conn->close();
 </head>
 <body>
 
-    <!-- ── Navigation ── -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
@@ -316,7 +316,7 @@ $conn->close();
                 </div>
             <?php endif; ?>
 
-            <!-- ══ HEADER & STATS ══════════════════════════════════ -->
+            <!-- HEADER & STATS -->
             <div class="bookings-header">
                 <h1><i class="fas fa-suitcase"></i> My Bookings</h1>
                 <p style="color:#666;">Manage and view all your travel bookings</p>
@@ -341,7 +341,7 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- ══ BOOKING CARDS ══════════════════════════════════ -->
+            <!-- BOOKING CARDS -->
             <?php if ($bookings->num_rows > 0): ?>
                 <div class="bookings-list">
                     <?php while ($booking = $bookings->fetch_assoc()): ?>
@@ -450,7 +450,7 @@ $conn->close();
                 </div>
             <?php endif; ?>
 
-            <!-- ══ SECTION: CF RECOMMENDATIONS ════════════════════ -->
+            <!-- SECTION: CF RECOMMENDATIONS -->
             <?php if (!empty($recommended_packages)): ?>
             <div class="recommendations-section">
 
@@ -518,7 +518,7 @@ $conn->close();
         </div>
     </section>
 
-    <!-- ── Footer ── -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

@@ -32,7 +32,6 @@ if ($result->num_rows > 0) {
         if ($package['image'] && file_exists(UPLOAD_DIR . $package['image'])) {
             unlink(UPLOAD_DIR . $package['image']);
         }
-        
         setSuccessMessage("Package deleted successfully!");
     } else {
         setErrorMessage("Failed to delete package!");

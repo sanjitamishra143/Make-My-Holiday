@@ -1,7 +1,6 @@
 <?php
 require_once 'config.php';
 
-// If already logged in, redirect
 if (isTouristLoggedIn()) {
     redirect('index.php');
 }
@@ -22,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Please fill all required fields!";
     }
 
-    // Email regex validation
+    // Email REGEX validation
     elseif (!preg_match("/^[a-zA-Z0-9._%+\-]+@gmail\.com$/", $email)) {
         $error = "Only Gmail addresses are allowed!";
     }

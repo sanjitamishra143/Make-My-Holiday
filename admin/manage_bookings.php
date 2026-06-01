@@ -128,7 +128,7 @@ $conn->close();
                                     </span>
                                 </td>
  
-                                <!-- ── ACTIONS ── -->
+                                <!-- ACTIONS  -->
                                 <td class="action-buttons">
  
                                     <!-- Status actions -->
@@ -160,13 +160,13 @@ $conn->close();
                                         </button>
                                     <?php endif; ?>
  
-                                    <!-- ✏️ EDIT button (always visible) -->
+                                    <!-- EDIT button (always visible) -->
                                     <a href="handle_booking.php?id=<?php echo $booking['id']; ?>&action=edit"
                                        class="btn-edit">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
  
-                                    <!-- 🗑️ DELETE button (always visible) -->
+                                    <!-- DELETE button (always visible) -->
                                     <a href="handle_booking.php?id=<?php echo $booking['id']; ?>&action=delete"
                                        class="btn-delete"
                                        onclick="return confirm('⚠️ Permanently delete Booking #<?php echo $booking['id']; ?>?\nThis cannot be undone.')">

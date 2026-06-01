@@ -7,7 +7,7 @@ if (!isAdminLoggedIn()) {
  
 $conn = getConnection();
  
-// ── Handle Add Category ───────────────────────────────────────────
+//  Handle Add Category 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
     $name        = sanitize($_POST['name']);
     $description = sanitize($_POST['description']);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     redirect('manage_categories.php');
 }
  
-// ── Handle Edit Category ──────────────────────────────────────────
+//  Handle Edit Category 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
     $id          = intval($_POST['id']);
     $name        = sanitize($_POST['name']);
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     redirect('manage_categories.php');
 }
  
-// ── Handle Delete Category ────────────────────────────────────────
+//  Handle Delete Category 
 if (isset($_GET['delete'])) {
     $id    = intval($_GET['delete']);
     $check = $conn->query("SELECT COUNT(*) as count FROM packages WHERE category_id = $id");
@@ -62,7 +62,7 @@ if (isset($_GET['delete'])) {
     redirect('manage_categories.php');
 }
  
-// ── Handle Add Tag ────────────────────────────────────────────────
+//  Handle Add Tag 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_tag') {
     $tag = trim($conn->real_escape_string($_POST['tag_name']));
     if ($tag) {
@@ -72,15 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     redirect('manage_categories.php');
 }
  
-// ── Handle Delete Tag ─────────────────────────────────────────────
+//  Handle Delete Tag 
 if (isset($_GET['delete_tag'])) {
     $tid = intval($_GET['delete_tag']);
     $conn->query("DELETE FROM tags WHERE id = $tid");
     setSuccessMessage("Tag deleted successfully!");
     redirect('manage_categories.php');
 }
- 
-// ── Fetch Data ────────────────────────────────────────────────────
+                                           
+//  Fetch Data 
 $categories = $conn->query("
     SELECT c.*, COUNT(p.id) as package_count
     FROM categories c
@@ -103,7 +103,7 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/admin-style.css">
     <style>
-        /* ── MODALS ── */
+        /*  MODALS  */
         .modal {
             display: none;
             position: fixed;
@@ -130,7 +130,7 @@ $conn->close();
         }
         .close:hover { color: #000; }
  
-        /* ── ICON GRID ── */
+        /*  ICON GRID  */
         .icon-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -151,7 +151,7 @@ $conn->close();
         .icon-option.selected { border-color: #667eea; background: #667eea; color: white; }
         .icon-option i { font-size: 24px; }
  
-        /* ── TAGS SECTION ── */
+        /*  TAGS SECTION  */
         .tags-section {
             margin-top: 35px;
         }
@@ -295,7 +295,7 @@ $conn->close();
  
         <div class="content">
  
-            <!-- ══ SECTION 1: CATEGORIES ══════════════════════════ -->
+            <!-- SECTION 1: CATEGORIES -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <h1><i class="fas fa-list"></i> Manage Categories</h1>
                 <button onclick="openAddModal()" class="btn btn-primary">
@@ -376,7 +376,7 @@ $conn->close();
                 </table>
             </div>
  
-            <!-- ══ SECTION 2: DESTINATION / ACTIVITY TAGS ══════════ -->
+            <!-- SECTION 2: DESTINATION / ACTIVITY TAGS  -->
             <div class="tags-section">
                 <!-- <div class="tags-section-header">
                     <h2><i class="fas fa-tags"></i> Destination / Activity Tags</h2>
@@ -463,7 +463,7 @@ $conn->close();
         </div><!-- end content -->
     </div><!-- end main-content -->
  
-    <!-- ══ ADD CATEGORY MODAL ════════════════════════════════════ -->
+    <!-- Add Category Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddModal()">&times;</span>
@@ -510,7 +510,7 @@ $conn->close();
         </div>
     </div>
  
-    <!-- ══ EDIT CATEGORY MODAL ═══════════════════════════════════ -->
+    <!-- Edit Category Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
@@ -558,7 +558,7 @@ $conn->close();
     </div>
  
     <script>
-        // ── Category Modals ──
+        // Category Modals 
         function openAddModal()  { document.getElementById('addModal').style.display  = 'block'; }
         function closeAddModal() { document.getElementById('addModal').style.display  = 'none';  }
         function openEditModal(id, name, description, icon) {
@@ -578,7 +578,7 @@ $conn->close();
         }
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
  
-        // ── Icon Selection ──
+        // Icon Selection 
         function selectIcon(element, iconClass, type) {
             var modal = type === 'add'
                 ? document.getElementById('addModal')
@@ -590,7 +590,7 @@ $conn->close();
             document.getElementById(type + '_icon').value = iconClass;
         }
  
-        // ── Close modal on outside click ──
+        // Close modal on outside click 
         window.onclick = function(event) {
             var addModal  = document.getElementById('addModal');
             var editModal = document.getElementById('editModal');

@@ -9,7 +9,7 @@ class RecommendationEngine {
         $this->conn = $conn;
     }
 
-    //  STEP 1 — Build a PACKAGE feature vector
+    //  step-1 : Build a package feature vector
     public function buildPackageVector(array $package): array {
         $vector = [];
 
@@ -19,7 +19,7 @@ class RecommendationEngine {
                 (strtolower($package['category'] ?? '') === strtolower($cat)) ? 1 : 0;
         }
 
-        // Normalize price to [0, 1]  (max budget ceiling: 200,000 NPR)
+        // Normalize price to [0, 1]
         $vector['price'] = min(($package['price'] ?? 0) / 200000, 1);
 
         // Normalize duration to [0, 1]  (max: 30 days)
@@ -35,7 +35,7 @@ class RecommendationEngine {
         return $vector;
     }
 
-    //  STEP 2 — Build a TOURIST preference vector
+    //  step-2 : Build a Tourist preference vector
     public function buildTouristVector(array $preferences): array {
         $vector   = [];
         $prefCats = array_map('strtolower', (array)($preferences['categories'] ?? []));
@@ -57,8 +57,7 @@ class RecommendationEngine {
         return $vector;
     }
 
-    //  STEP 3 — COSINE SIMILARITY
-    //  Formula:  similarity(A, B) = (A · B) / (||A|| × ||B||)
+    //  step-3 : Cosine Similarity (A, B) = (A · B) / (||A|| × ||B||)
  
     public function cosineSimilarity(array $vecA, array $vecB): float {
         $keys = array_unique(array_merge(array_keys($vecA), array_keys($vecB)));
@@ -84,7 +83,7 @@ class RecommendationEngine {
         return $dot / ($magA * $magB);
     }
 
-    //  STEP 4 — Get TOP-N recommendations for a tourist
+    //  step-4 : Get TOP-N recommendations for a tourist
     public function getRecommendations(int $touristId, array $preferences, int $topN = 5): array {
         $packages      = $this->getAllPackages();
         $touristVector = $this->buildTouristVector($preferences);
@@ -108,7 +107,7 @@ class RecommendationEngine {
         return $results;
     }
 
-    //  STEP 5 — Load saved tourist preferences from DB
+    //  step-5 : Load saved tourist preferences from DB
     public function getTouristPreferences(int $touristId): ?array {
         $stmt = $this->conn->prepare(
             "SELECT categories, max_budget, preferred_days, destination_tags
@@ -128,7 +127,6 @@ class RecommendationEngine {
     }
 
     // Private DB helpers 
-
     private function getAllPackages(): array {
         $sql = "SELECT p.*, c.name AS category,
                        IFNULL(GROUP_CONCAT(DISTINCT t.tag_name ORDER BY t.tag_name), '') AS tags
